@@ -1,6 +1,6 @@
 ################################################################################
 #      This file is part of OpenELEC - http://www.openelec.tv
-#      Copyright (C) 2009-2014 Stephan Raue (stephan@openelec.tv)
+#      Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
 #
 #  OpenELEC is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -17,11 +17,11 @@
 ################################################################################
 
 PKG_NAME="vdr-plugin-streamdev"
-PKG_VERSION="84c6f6b"
+PKG_VERSION="fc52e92"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
-PKG_SITE="http://projects.vdr-developer.org/projects/show/plg-streamdev"
+PKG_SITE="http://projects.vdr-developer.org/projects/plg-streamdev"
 PKG_URL="$DISTRO_SRC/$PKG_NAME-$PKG_VERSION.tar.xz"
 PKG_DEPENDS_TARGET="toolchain vdr libressl"
 PKG_PRIORITY="optional"
@@ -33,17 +33,26 @@ PKG_IS_ADDON="no"
 
 PKG_AUTORECONF="no"
 
-pre_configure_target() {
-  export CFLAGS="$CFLAGS -fPIC"
-  export CXXFLAGS="$CXXFLAGS -fPIC"
-  export LDFLAGS="$LDFLAGS -fPIC"
-}
-
 make_target() {
   VDR_DIR=$(get_build_dir vdr)
-  make VDRDIR=$VDR_DIR \
+  export PKG_CONFIG_PATH=$VDR_DIR:$PKG_CONFIG_PATH
+  export CPLUS_INCLUDE_PATH=$VDR_DIR/include
+
+  make \
     LIBDIR="." \
-    LOCALEDIR="./locale"
+    LOCDIR="./locale" \
+    all
+}
+
+post_make_target() {
+  VDR_DIR=$(get_build_dir vdr)
+  VDR_APIVERSION=`sed -ne '/define APIVERSION/s/^.*"\(.*\)".*$/\1/p' $VDR_DIR/config.h`
+  LIB_NAME=lib${PKG_NAME/-plugin/}
+  cp --remove-destination $ROOT/$PKG_BUILD/server/${LIB_NAME}-server.so $ROOT/$PKG_BUILD/server/${LIB_NAME}-server.so.${VDR_APIVERSION}
+  cp --remove-destination $ROOT/$PKG_BUILD/client/${LIB_NAME}-client.so $ROOT/$PKG_BUILD/client/${LIB_NAME}-client.so.${VDR_APIVERSION}
+
+  $STRIP client/libvdr-*.so*
+  $STRIP server/libvdr-*.so*
 }
 
 makeinstall_target() {
