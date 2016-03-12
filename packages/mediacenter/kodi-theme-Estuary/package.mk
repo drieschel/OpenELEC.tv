@@ -17,12 +17,12 @@
 ################################################################################
 
 PKG_NAME="kodi-theme-Estuary"
-PKG_VERSION="17.0-alpha1-c6b201a"
+PKG_VERSION="17.0-alpha1-7b1467a"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="http://www.kodi.tv"
-PKG_URL="$DISTRO_SRC/$PKG_NAME-$PKG_VERSION.tar.xz"
+PKG_URL="https://dl.dropboxusercontent.com/u/18902170/kodi-theme-Estuary-17.0-alpha1-7b1467a.tar.xz"
 PKG_DEPENDS_TARGET="toolchain kodi:host"
 PKG_PRIORITY="optional"
 PKG_SECTION="mediacenter"
