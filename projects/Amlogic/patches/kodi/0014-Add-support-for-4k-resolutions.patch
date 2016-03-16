@@ -1,21 +1,23 @@
-From f700bbdfc4b3087a7e8c164c853e13465b5f0cd6 Mon Sep 17 00:00:00 2001
+From 4d58d8dd99dbedcc1d92a1ffb33d8522a7f22cf8 Mon Sep 17 00:00:00 2001
 From: Alex Deryskyba <alex@codesnake.com>
 Date: Wed, 1 Jul 2015 23:37:11 +0200
-Subject: [PATCH 05/17] [aml] Add support for 4k resolutions
+Subject: [PATCH 14/14] Add support for 4k resolutions
 
+Conflicts:
+	xbmc/windowing/egl/EGLNativeTypeAmlogic.cpp
 ---
  xbmc/utils/AMLUtils.cpp                     | 16 +++---
- xbmc/windowing/egl/EGLNativeTypeAmlogic.cpp | 83 ++++++++++++++++++++++-------
+ xbmc/windowing/egl/EGLNativeTypeAmlogic.cpp | 81 ++++++++++++++++++++++-------
  xbmc/windowing/egl/EGLNativeTypeAmlogic.h   |  2 +
- 3 files changed, 73 insertions(+), 28 deletions(-)
+ 3 files changed, 73 insertions(+), 26 deletions(-)
 
 diff --git a/xbmc/utils/AMLUtils.cpp b/xbmc/utils/AMLUtils.cpp
-index ac2667c..4555072 100644
+index 1b54435..05f2cd0 100644
 --- a/xbmc/utils/AMLUtils.cpp
 +++ b/xbmc/utils/AMLUtils.cpp
-@@ -430,8 +430,8 @@ bool aml_mode_to_resolution(const char *mode, RESOLUTION_INFO *res)
+@@ -449,8 +449,8 @@ bool aml_mode_to_resolution(const char *mode, RESOLUTION_INFO *res)
    }
-   else if (StringUtils::EqualsNoCase(fromMode, "4k2ksmpte"))
+   else if (StringUtils::EqualsNoCase(fromMode, "4k2ksmpte") || StringUtils::EqualsNoCase(fromMode, "smpte24hz"))
    {
 -    res->iWidth = 1920;
 -    res->iHeight= 1080;
@@ -24,9 +26,9 @@ index ac2667c..4555072 100644
      res->iScreenWidth = 4096;
      res->iScreenHeight= 2160;
      res->fRefreshRate = 24;
-@@ -448,8 +448,8 @@ bool aml_mode_to_resolution(const char *mode, RESOLUTION_INFO *res)
+@@ -467,8 +467,8 @@ bool aml_mode_to_resolution(const char *mode, RESOLUTION_INFO *res)
    }
-   else if (StringUtils::EqualsNoCase(fromMode, "4k2k24hz"))
+   else if (StringUtils::EqualsNoCase(fromMode, "4k2k24hz") || StringUtils::EqualsNoCase(fromMode, "2160p24hz"))
    {
 -    res->iWidth = 1920;
 -    res->iHeight= 1080;
@@ -35,9 +37,9 @@ index ac2667c..4555072 100644
      res->iScreenWidth = 3840;
      res->iScreenHeight= 2160;
      res->fRefreshRate = 24;
-@@ -457,8 +457,8 @@ bool aml_mode_to_resolution(const char *mode, RESOLUTION_INFO *res)
+@@ -476,8 +476,8 @@ bool aml_mode_to_resolution(const char *mode, RESOLUTION_INFO *res)
    }
-   else if (StringUtils::EqualsNoCase(fromMode, "4k2k25hz"))
+   else if (StringUtils::EqualsNoCase(fromMode, "4k2k25hz") || StringUtils::EqualsNoCase(fromMode, "2160p25hz"))
    {
 -    res->iWidth = 1920;
 -    res->iHeight= 1080;
@@ -46,9 +48,9 @@ index ac2667c..4555072 100644
      res->iScreenWidth = 3840;
      res->iScreenHeight= 2160;
      res->fRefreshRate = 25;
-@@ -475,8 +475,8 @@ bool aml_mode_to_resolution(const char *mode, RESOLUTION_INFO *res)
+@@ -494,8 +494,8 @@ bool aml_mode_to_resolution(const char *mode, RESOLUTION_INFO *res)
    }
-   else if (StringUtils::EqualsNoCase(fromMode, "4k2k30hz"))
+   else if (StringUtils::EqualsNoCase(fromMode, "4k2k30hz") || StringUtils::EqualsNoCase(fromMode, "2160p30hz"))
    {
 -    res->iWidth = 1920;
 -    res->iHeight= 1080;
@@ -58,14 +60,13 @@ index ac2667c..4555072 100644
      res->iScreenHeight= 2160;
      res->fRefreshRate = 30;
 diff --git a/xbmc/windowing/egl/EGLNativeTypeAmlogic.cpp b/xbmc/windowing/egl/EGLNativeTypeAmlogic.cpp
-index a2a5af0..765b7c6 100644
+index 21256ef..2103f0b 100644
 --- a/xbmc/windowing/egl/EGLNativeTypeAmlogic.cpp
 +++ b/xbmc/windowing/egl/EGLNativeTypeAmlogic.cpp
-@@ -66,13 +66,26 @@ void CEGLNativeTypeAmlogic::Initialize()
+@@ -65,7 +65,22 @@ void CEGLNativeTypeAmlogic::Initialize()
+ {
    aml_permissions();
-   aml_cpufreq_min(true);
-   aml_cpufreq_max(true);
--  return;
+   DisableFreeScale();
 +  GetMaxResolution(m_maxResolution);
  }
 +
@@ -84,13 +85,8 @@ index a2a5af0..765b7c6 100644
 +
  void CEGLNativeTypeAmlogic::Destroy()
  {
-   aml_cpufreq_min(false);
-   aml_cpufreq_max(false);
--  return;
- }
- 
- bool CEGLNativeTypeAmlogic::CreateNativeDisplay()
-@@ -88,8 +101,8 @@ bool CEGLNativeTypeAmlogic::CreateNativeWindow()
+   return;
+@@ -84,8 +99,8 @@ bool CEGLNativeTypeAmlogic::CreateNativeWindow()
    if (!nativeWindow)
      return false;
  
@@ -101,9 +97,9 @@ index a2a5af0..765b7c6 100644
    m_nativeWindow = nativeWindow;
  
    SetFramebufferResolution(nativeWindow->width, nativeWindow->height);
-@@ -144,48 +157,78 @@ bool CEGLNativeTypeAmlogic::SetNativeResolution(const RESOLUTION_INFO &res)
-     ((fbdev_window *)m_nativeWindow)->height = res.iScreenHeight;
+@@ -142,48 +157,78 @@ bool CEGLNativeTypeAmlogic::SetNativeResolution(const RESOLUTION_INFO &res)
    }
+ #endif
  
 -  switch((int)(0.5 + res.fRefreshRate))
 +  switch((int)(res.fRefreshRate*10))
@@ -194,7 +190,7 @@ index a2a5af0..765b7c6 100644
  }
  
  bool CEGLNativeTypeAmlogic::ProbeResolutions(std::vector<RESOLUTION_INFO> &resolutions)
-@@ -254,8 +297,8 @@ void CEGLNativeTypeAmlogic::SetFramebufferResolution(int width, int height) cons
+@@ -280,8 +325,8 @@ void CEGLNativeTypeAmlogic::SetFramebufferResolution(int width, int height) cons
      {
        vinfo.xres = width;
        vinfo.yres = height;
@@ -203,13 +199,13 @@ index a2a5af0..765b7c6 100644
 +      vinfo.xres_virtual = m_maxResolution.iScreenWidth;
 +      vinfo.yres_virtual = m_maxResolution.iScreenHeight * 2;
        vinfo.bits_per_pixel = 32;
+       vinfo.activate = FB_ACTIVATE_ALL;
        ioctl(fd0, FBIOPUT_VSCREENINFO, &vinfo);
-     }
 diff --git a/xbmc/windowing/egl/EGLNativeTypeAmlogic.h b/xbmc/windowing/egl/EGLNativeTypeAmlogic.h
-index 687ab1c..d0b0ff1 100644
+index 6867c38..9ca41d4 100644
 --- a/xbmc/windowing/egl/EGLNativeTypeAmlogic.h
 +++ b/xbmc/windowing/egl/EGLNativeTypeAmlogic.h
-@@ -53,6 +53,8 @@ protected:
+@@ -55,6 +55,8 @@ protected:
  private:
    void SetFramebufferResolution(const RESOLUTION_INFO &res) const;
    void SetFramebufferResolution(int width, int height) const;
@@ -219,5 +215,5 @@ index 687ab1c..d0b0ff1 100644
 +  RESOLUTION_INFO m_maxResolution;
  };
 -- 
-1.9.1
+2.5.0
 

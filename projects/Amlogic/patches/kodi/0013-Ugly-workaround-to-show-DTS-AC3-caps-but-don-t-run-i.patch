@@ -1,18 +1,18 @@
-From 56980c251ddd4a725ce9f5a1c0f6b5f72bd14a8d Mon Sep 17 00:00:00 2001
+From 7355612f707ddf1bf82130ed1176ba1758c469bd Mon Sep 17 00:00:00 2001
 From: Alex Deryskyba <alex@codesnake.com>
 Date: Tue, 30 Jun 2015 11:19:57 +0200
-Subject: [PATCH 04/17] [aml] Ugly workaround to show DTS/AC3 caps but don't
- run into multi channel issues as we can only open 2 pcm channels
+Subject: [PATCH 13/14] Ugly workaround to show DTS/AC3 caps but don't run into
+ multi channel issues as we can only open 2 pcm channels
 
 ---
  xbmc/cores/AudioEngine/Sinks/AESinkALSA.cpp | 6 ++++++
  1 file changed, 6 insertions(+)
 
 diff --git a/xbmc/cores/AudioEngine/Sinks/AESinkALSA.cpp b/xbmc/cores/AudioEngine/Sinks/AESinkALSA.cpp
-index e22db7a..dcdaf2e 100644
+index 771364b..1340257 100644
 --- a/xbmc/cores/AudioEngine/Sinks/AESinkALSA.cpp
 +++ b/xbmc/cores/AudioEngine/Sinks/AESinkALSA.cpp
-@@ -1291,6 +1291,12 @@ void CAESinkALSA::EnumerateDevicesEx(AEDeviceInfoList &list, bool force)
+@@ -1330,6 +1330,12 @@ void CAESinkALSA::EnumerateDevicesEx(AEDeviceInfoList &list, bool force)
  
  AEDeviceType CAESinkALSA::AEDeviceTypeFromName(const std::string &name)
  {
@@ -26,5 +26,5 @@ index e22db7a..dcdaf2e 100644
      return AE_DEVTYPE_HDMI;
    else if (name.substr(0, 6) == "iec958" || name.substr(0, 5) == "spdif")
 -- 
-1.9.1
+2.5.0
 

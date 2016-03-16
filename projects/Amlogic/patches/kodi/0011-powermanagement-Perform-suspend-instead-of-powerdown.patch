@@ -1,7 +1,7 @@
-From a7945b68d52566a28979068d2a848fd8ecf63401 Mon Sep 17 00:00:00 2001
+From c75776b51820e3b6403a06dc8f1bb954d720458a Mon Sep 17 00:00:00 2001
 From: Alex Deryskyba <alex@codesnake.com>
 Date: Tue, 14 Jul 2015 16:02:35 +0300
-Subject: [PATCH 15/17] Perform suspend instead of powerdown
+Subject: [PATCH 11/14] [powermanagement] Perform suspend instead of powerdown
 
 ---
  system/keymaps/keyboard.xml                        | 2 +-
@@ -9,10 +9,10 @@ Subject: [PATCH 15/17] Perform suspend instead of powerdown
  2 files changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/system/keymaps/keyboard.xml b/system/keymaps/keyboard.xml
-index 6e178a5..c79c5d9 100644
+index d28e341..c719469 100644
 --- a/system/keymaps/keyboard.xml
 +++ b/system/keymaps/keyboard.xml
-@@ -96,7 +96,7 @@
+@@ -91,7 +91,7 @@
        <backslash>ToggleFullScreen</backslash>
        <home>FirstPage</home>
        <end>LastPage</end>
@@ -44,5 +44,5 @@ index 4e5bcc6..ad5847d 100644
  
  bool CLogindUPowerSyscall::Reboot()
 -- 
-1.9.1
+2.5.0
 

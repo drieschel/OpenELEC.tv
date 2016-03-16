@@ -1,7 +1,7 @@
-From 49fde6b4644ef16cf74c27778021bc305b8f509c Mon Sep 17 00:00:00 2001
+From bf6d3eb63d9fe13f4a0bc67618be69192bb7510e Mon Sep 17 00:00:00 2001
 From: Alex Deryskyba <alex@codesnake.com>
 Date: Mon, 8 Sep 2014 23:29:40 +0300
-Subject: [PATCH 06/17] Reorder libraries in configure script to prevent linker
+Subject: [PATCH 02/14] Reorder libraries in configure script to prevent linker
  errors when linking with libsmbclient
 
 Place libsmbclient before all other libraries to prevent linker errors when linking
@@ -13,10 +13,10 @@ libresolv.
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/configure.ac b/configure.ac
-index 686f4a2..c767357 100644
+index 746d044..d8f1133 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -1525,7 +1525,7 @@ fi
+@@ -1428,7 +1428,7 @@ fi
  # samba
  if test "x$use_samba" != "xno"; then
    PKG_CHECK_MODULES([SAMBA], [smbclient],
@@ -26,5 +26,5 @@ index 686f4a2..c767357 100644
        use_samba=no;AC_MSG_ERROR($missing_library))
        USE_LIBSMBCLIENT=0
 -- 
-1.9.1
+2.5.0
 
