@@ -112,7 +112,7 @@ fi
 
   if [ "$BOOTLOADER" = "syslinux" ]; then
     mformat -v "$FAT_VOL_ID" -N "$FAT_VOL_ID" ::
-  elif [ "$BOOTLOADER" = "bcm2835-bootloader" -o "$BOOTLOADER" = "u-boot" ]; then
+  elif [ "$BOOTLOADER" = "bcm2835-firmware" -o "$BOOTLOADER" = "u-boot" ]; then
     mformat ::
   fi
   sync
@@ -149,7 +149,7 @@ EOF
     mcopy $ROOT/$TOOLCHAIN/share/syslinux/bootx64.efi ::/EFI/BOOT
     mcopy $ROOT/$TOOLCHAIN/share/syslinux/ldlinux.e64 ::/EFI/BOOT
     mcopy "$OE_TMP"/syslinux.cfg ::/EFI/BOOT
-elif [ "$BOOTLOADER" = "bcm2835-bootloader" ]; then
+elif [ "$BOOTLOADER" = "bcm2835-firmware" ]; then
   # create bootloader configuration
     echo "image: creating bootloader configuration..."
     cat << EOF > "$OE_TMP"/cmdline.txt
@@ -186,6 +186,8 @@ elif [ "$BOOTLOADER" = "u-boot" ]; then
       mcopy $RELEASE_DIR/3rdparty/bootloader/uEnv.txt ::
     elif [ -f "$RELEASE_DIR/3rdparty/bootloader/boot.scr" ]; then
       mcopy $RELEASE_DIR/3rdparty/bootloader/boot.scr ::
+    elif [ -f "$RELEASE_DIR/3rdparty/bootloader/boot.ini" ]; then
+      mcopy $RELEASE_DIR/3rdparty/bootloader/boot.ini ::
     fi
 
     echo "image: installing u-boot bootloader..."
@@ -197,6 +199,9 @@ elif [ "$BOOTLOADER" = "u-boot" ]; then
       dd if="$RELEASE_DIR/3rdparty/bootloader/u-boot-$UBOOT_SYSTEM.imx" of="$DISK" bs=512 seek=2 conv=fsync,notrunc >"$SAVE_ERROR" 2>&1 || show_error
     elif [ -f "$RELEASE_DIR/3rdparty/bootloader/u-boot.imx" ]; then
       dd if="$RELEASE_DIR/3rdparty/bootloader/u-boot.imx" of="$DISK" bs=512 seek=2 conv=fsync,notrunc >"$SAVE_ERROR" 2>&1 || show_error
+    elif [ -f "$RELEASE_DIR/3rdparty/bootloader/u-boot-fuse" ]; then
+     # allow custom dd script for vendor specific fusing
+      . $RELEASE_DIR/3rdparty/bootloader/u-boot-fuse
     fi
 
     echo "image: copying files to part1..."
