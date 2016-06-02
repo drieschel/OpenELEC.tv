@@ -1,0 +1,47 @@
+diff -Naur linux-amlogic-3.10-c8d5b2f.orig/arch/arm/boot/dts/amlogic/meson8_k200b_2G_emmc_sdio.dtd linux-amlogic-3.10-c8d5b2f/arch/arm/boot/dts/amlogic/meson8_k200b_2G_emmc_sdio.dtd
+--- linux-amlogic-3.10-c8d5b2f.orig/arch/arm/boot/dts/amlogic/meson8_k200b_2G_emmc_sdio.dtd	2016-06-02 12:26:17.338875475 +0200
++++ linux-amlogic-3.10-c8d5b2f/arch/arm/boot/dts/amlogic/meson8_k200b_2G_emmc_sdio.dtd	2016-06-02 12:28:25.000000000 +0200
+@@ -1058,25 +1058,25 @@
+ 	};
+ 
+ /// ***************************************************************************************
++///    -       Led
++//$$ MODULE="Led"
++//$$ DEVICE="led"
++//$$ L2 PROP_STR = "status"
++//$$ L2 PROP_U32 = "board_type"
++//$$ L2 PROP_STR = "red_led_gpio"
++//$$ L2 PROP_STR = "blue_led_gpio"
++//$$ L2 PROP_U32 = "led_mode"
++	led{
++		compatible = "amlogic-led";
++		dev_name = "aml-setio";
++		status = "okay";
++		red_led_gpio = "GPIO_TEST_N";/** if your board just need one gpio,please config red_led_gpio and blue_led_gpio the same */
++		blue_led_gpio = "GPIO_TEST_N";/**  */
++		red_led_mode = <1>; /** 1:H on L off , 0:H off L on */
++		blue_led_mode= <1>; /** 1:H on L off , 0:H off L on */
++	};
+ 
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
++/// ***************************************************************************************
+ /// -   Audio
+ //$$ MODULE="Audio"
+ //$$ DEVICE="audio_i2s"

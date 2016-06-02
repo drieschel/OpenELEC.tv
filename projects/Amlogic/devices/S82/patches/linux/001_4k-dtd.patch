@@ -1,0 +1,94 @@
+diff -Naur linux-amlogic-3.10-c8d5b2f.orig/arch/arm/boot/dts/amlogic/meson8_k200b_2G_emmc_sdio.dtd linux-amlogic-3.10-c8d5b2f/arch/arm/boot/dts/amlogic/meson8_k200b_2G_emmc_sdio.dtd
+--- linux-amlogic-3.10-c8d5b2f.orig/arch/arm/boot/dts/amlogic/meson8_k200b_2G_emmc_sdio.dtd	2016-06-02 12:19:12.442851575 +0200
++++ linux-amlogic-3.10-c8d5b2f/arch/arm/boot/dts/amlogic/meson8_k200b_2G_emmc_sdio.dtd	2016-06-02 12:20:55.000000000 +0200
+@@ -91,6 +91,7 @@
+            reg = <0 0x01200000>;
+            linux,contiguous-region;
+         };
++
+ 	};
+ /// ***************************************************************************************
+ ///	-	GIC
+@@ -133,11 +134,10 @@
+ 		compatible = "amlogic,mesonfb";
+ 		dev_name = "mesonfb";
+ 		status = "okay";
+-		reserve-memory = <0x01800000  0x00100000>;
++		reserve-memory = <0x04800000 0x00100000>;
+ 		reserve-iomap = "true";
+                 vmode = <3>; /**0:VMODE_720P 1:VMODE_LCD  2:VMODE_LVDS_1080P 3:VMODE_1080P*/
+ 		scale_mode = <1>; /*0:default 1:new*/
+-		4k2k_fb = <0>;
+ 		display_size_default = <1920 1080 1920 3240 32>; //1920*1080*4*3 = 0x17BB000
+ 	};
+ 
+@@ -175,8 +175,8 @@
+                 compatible = "amlogic,vdec";
+                 dev_name = "vdec.0";
+                 status = "okay";
+-								reserve-memory = <0x04000000>; // 64M
+-//		reserve-iomap = "true";
++                reserve-memory = <0x10000000>;
++                reserve-iomap = "true";
+         };
+ ///	-	picture decoder
+ //$$ MODULE="picture decoder"
+@@ -320,6 +320,7 @@
+ 		dev_name = "mesonvout2";
+ 		status = "okay";
+ 	};
++
+ /// ***************************************************************************************
+ ///	-	DISP&MM-A/V Amvideocap
+ //$$ MODULE = "DISP&MM-Amvideocap"
+@@ -444,6 +445,7 @@
+             status = "okay";
+             power_gpio = "GPIOAO_6";
+             power_gpio2 = "GPIOX_11";
++
+ 	};
+ 
+ /// ***************************************************************************************
+@@ -746,6 +748,8 @@
+ //		pinctrl-0=<&d_i2c_master>;
+ //		#address-cells = <1>;
+ //		#size-cells = <0>;
++
++
+ //	};
+ 
+ /// ***************************************************************************************
+@@ -1054,6 +1058,25 @@
+ 	};
+ 
+ /// ***************************************************************************************
++
++
++
++
++
++
++
++
++
++
++
++
++
++
++
++
++
++
++
+ /// -   Audio
+ //$$ MODULE="Audio"
+ //$$ DEVICE="audio_i2s"
+@@ -1423,6 +1446,7 @@
+        compatible = "amlogic,des,tdes";
+        dev_name = "aml_tdes";
+     };
++
+ /// **************************************************************************************
+ /// -   GPIO
+ //$$ MODULE="GPIO"
